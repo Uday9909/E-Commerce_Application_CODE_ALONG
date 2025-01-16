@@ -19,8 +19,9 @@ function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center  bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-12">
-      <div className="bg-white w-full max-w-md p-8 rounded-xl shadow-lg">
+   <div className="flex min-h-screen items-center justify-center  bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-12">
+   
+     <div className="bg-white w-full max-w-md p-8 rounded-xl shadow-lg">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-800">Sign in to your account</h2>
         </div>
