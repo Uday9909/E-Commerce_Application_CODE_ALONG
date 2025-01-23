@@ -6,7 +6,7 @@ const router = express.Router();
 const { upload } = require("../middleware/multer");
 const ErrorHandler = require("../utils/ErrorHandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const bcrypt =require("bcryptjs");
+const bcrypt =require("bcrypt");
 require("dotenv").config();
 
 
@@ -44,7 +44,7 @@ router.post("/create-user", upload.single("file"), catchAsyncErrors(async (req, 
     const user = await User.create({
         name,
         email,
-        password: hashedPassword,
+        password,
         avatar: {
             public_id:req.file?.filename || "",
             url: fileUrl,
@@ -53,6 +53,41 @@ router.post("/create-user", upload.single("file"), catchAsyncErrors(async (req, 
 console.log(user);
 
 res.status(201).json({ success:true,user});
+}));
+router.post("/login-user",catchAsyncErrors(async (req,res,next) =>{
+    console.log("Logging in user...");
+
+    let{ email,password } =req.body;
+    email=email;
+    password=password;
+
+    if(!email || !password){
+        return next(new ErrorHandler("Please provide me both email and password.",400));
+    }
+    const user_authen = await User.findOne({ email }).select("+password");
+    if(!user_authen){
+        console.log("No user with such email in the database. ")
+        return next(new ErrorHandler("Invalid email or password,please register first.",401));
+
+        }
+        const isPasswordMatched = await bcrypt.compare(password,user_authen.password);
+        console.log("Password Matched Result: ",isPasswordMatched);
+        console.log("At Authentication ","Password:", password,"Hash: ",user_authen.password);
+
+        if(!isPasswordMatched){
+            console.log("Password does not match.");
+            return next(new ErrorHandler("Authentication failed, Invalid password",401));
+        }
+        res.status(200).json({
+            success:true,
+            message:"User authenticated successfully.",
+            user:{
+                id:user_authen._id,
+                email:user_authen.email,
+                name:user_authen.name,
+            },
+        });
+        
 }));
 
 module.exports = router;
