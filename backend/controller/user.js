@@ -65,6 +65,7 @@ router.post("/login-user",catchAsyncErrors(async (req,res,next) =>{
         return next(new ErrorHandler("Please provide me both email and password.",400));
     }
     const user_authen = await User.findOne({ email }).select("+password");
+    
     if(!user_authen){
         console.log("No user with such email in the database. ")
         return next(new ErrorHandler("Invalid email or password,please register first.",401));
