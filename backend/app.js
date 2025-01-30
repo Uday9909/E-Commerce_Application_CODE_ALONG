@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const product = require("./controller/product");
 const user = require("./controller/user");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -14,6 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 app.use("/api/v2/user", user);
+app.use("/api/v2/product",product);
 
 if (process.env.NODE_ENV !== "PRODUCTION") {
   require("dotenv").config({
