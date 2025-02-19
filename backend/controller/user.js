@@ -3,9 +3,10 @@ const path = require("path");
 const fs =require("fs");
 const User = require("../model/user");
 const router = express.Router();
-const { upload } = require("../middleware/multer");
+const { upload } = require("../multer");
 const ErrorHandler = require("../utils/ErrorHandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
+const jwt = require("jsonwebtoken");
 const bcrypt =require("bcrypt");
 require("dotenv").config();
 
