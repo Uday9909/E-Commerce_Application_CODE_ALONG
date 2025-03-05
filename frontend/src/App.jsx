@@ -2,7 +2,7 @@ import './App.css'
 
 import React from 'react';
 import {BrowserRouter , Routes, Route} from 'react-router-dom';
-import {ProductDetails, SignupPage} from './Routes/routes.js';
+import {ProductDetails, SignupPage, CreateAddress} from './Routes/routes.js';
 import {Home, LoginPage} from "./Routes/routes.js";
 import {CreateProduct,MyProducts,Cart,Profile} from "./Routes/routes.js";
 
@@ -19,6 +19,7 @@ const App=()=> {
       <Route path='/cart' element={<Cart/>}/>
       <Route path='/productdetails/:id' element={<ProductDetails/>}/>
       <Route path='/profile' element={<Profile/>}/>
+      <Route path="/create-address" element={<CreateAddress />} />
     </Routes>
     </BrowserRouter>
   )

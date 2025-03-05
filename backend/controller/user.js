@@ -114,4 +114,31 @@ router.get("/Profile", catchAsyncErrors(async(req,res,next) => {
     });
 }))
 
+router.post("/add-address", catchAsyncErrors(async (req, res, next) => {
+    console.log("Adding new address:", req.body);
+    const {country,city,address1,address2,zipCode,addressType,email}=req.body;
+
+    const user = await User.findOne({ email });
+    if(!user){
+        return next(new ErrorHandler("User not found",404));
+    }
+
+    const newAddress = {
+        country,
+        city,
+        address1,
+        address2,
+        zipCode,
+        addressType,
+    };
+        user.addresses.push(newAddress);
+        await user.save();
+        res.status(201).json({
+            success:true,
+            addresses:user.addresses,
+            message:"Address added successfully",
+        });
+}))
+
+
 module.exports = router;
