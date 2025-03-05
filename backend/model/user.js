@@ -58,11 +58,24 @@ const userSchema = new mongoose.Schema({
         },
     },
     createdAt: {
-        type: Date, // Fixed typo from `DataTransfer` to `Date`
+        type: Date,
         default: Date.now,
     },
     resetPasswordToken: String,
     resetPasswordTime: Date,
+    cart: [
+        {
+            productId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Product',
+                required: true
+            },
+            quantity: {
+                type: Number,
+                default: 1
+            }
+        }
+    ],
 });
 
 // Hash password before saving user
