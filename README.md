@@ -85,13 +85,6 @@ This milestone focuses on establishing a robust backend endpoint to support the 
 
 ---
 
-Here’s a clear and engaging description for your README file:
-
----
-
-Here’s a README description for Milestone 7:
-
----
 
 # Milestone 7: Backend User Login Endpoint with Password Validation 🔐
 
@@ -471,3 +464,88 @@ In this milestone, we create a product information page that displays detailed p
 - Create a new page to display individual product details.  
 - Implement a quantity selector.  
 - Add an "Add to Cart" button for purchasing.
+
+
+Here’s a concise summary for your README update:  
+
+---
+
+### Milestone 17: Add to Cart Functionality 🛒  
+
+In this milestone, we implemented the backend logic to add products to the cart and store them in the database.  
+
+#### Key Updates:  
+- **Updated User Schema** to store cart products.  
+- **Created a Cart Schema** to manage cart items.  
+- **Developed an API Endpoint** to receive product details and save them to the cart.  
+
+This milestone helps in understanding cart functionality and database integration for e-commerce applications.  
+
+---
+
+Milestone 18: Fetch Cart Items 🛒
+In this milestone, we implemented the backend logic to retrieve products from the user's cart for display on the cart page.
+
+Key Updates:
+Created an API Endpoint to handle requests from the cart page.
+Fetched Cart Products using the user's email to display their cart items.
+This milestone enhances the cart functionality by enabling users to view their selected products.
+
+
+
+---
+# **Milestone 19: Cart Functionality**
+
+## Overview
+In this milestone, we implemented the cart functionality by creating a frontend UI for the cart page and developing backend endpoints to manage product quantities within the cart.
+
+## Learning Goals 🎯
+By completing this milestone, we:
+- Created a cart page to display products inside the cart using the endpoint built in Milestone 18.
+- Implemented an option to increase and decrease the quantity of each product using `+` and `-` buttons.
+- Developed backend endpoints to handle quantity adjustments for products in the cart.
+
+## Implementation Details
+
+### Frontend:
+- Created a dedicated **Cart Page** to display all products added to the cart.
+- Implemented dynamic UI components to show product details, prices, and quantity controls.
+- Added `+` and `-` buttons to allow users to adjust the quantity of each product.
+- Integrated API calls to fetch and update cart data dynamically.
+
+### Backend:
+- Created API endpoints to **increase and decrease** the quantity of a product in the cart.
+- Updated the database to reflect changes in product quantities.
+- Implemented validation checks to prevent negative quantities.
+
+
+## How to Test
+1. Navigate to the cart page and verify that products appear correctly.
+2. Use the `+` and `-` buttons to adjust the quantity and observe real-time updates.
+3. Check the API responses to ensure correct updates to the database.
+4. Ensure the UI reflects changes made to the cart without requiring a page refresh.
+
+## Conclusion
+With this milestone, we have successfully implemented a dynamic shopping cart system that allows users to manage product quantities seamlessly. This enhances user experience and lays the foundation for further enhancements like checkout functionality.
+
+---
+🎉 **Milestone 19 Completed!** 🚀
+
+
+
+## Milestone 20: Profile Page & User Data Endpoint  
+
+### Overview  
+In this milestone, we implemented a profile page frontend and created a backend endpoint to retrieve user data.  
+
+### Key Features  
+- **Backend Endpoint:** Sends user data via email.  
+- **Profile Page Frontend:** Displays user details including profile photo, name, and email.  
+- **Address Section:**  
+  - Shows user addresses.  
+  - Displays "No address found" if no addresses exist.  
+  - Includes an "Add Address" button for adding new addresses.  
+
+This milestone enhances user profile management by integrating backend data retrieval and frontend rendering. 🚀  
+
+---
