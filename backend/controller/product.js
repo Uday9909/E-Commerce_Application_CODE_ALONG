@@ -1,172 +1,265 @@
-const express = require('express')
+const express = require('express');
+const mongoose = require('mongoose');
 const Product = require('../model/product');
 const User = require('../model/user');
 const router = express.Router();
-const {pupload} = require('../multer')
+const { pupload } = require("../multer");
 const path = require('path');
-const { model } = require('mongoose');
-const mongoose = require('mongoose')
-const validateProductsData = (data) => {
+
+const validateProductData = (data) => {
     const errors = [];
 
-    if (!data.name.trim()) errors.push("Name is required");
-    if (!data.description) errors.push("Description is required");
-    if (!data.category) errors.push("Category is required");
-    if (!data.price || isNaN(data.price) || data.price <= 0) errors.push("Proper price is required");
-    if (!data.stock || isNaN(data.stock) || data.stock <= 0) errors.push("Proper stock is required");
-    if (!data.email) errors.push("Email is required");
+    if (!data.name) errors.push('Product name is required');
+    if (!data.description) errors.push('Product description is required');
+    if (!data.category) errors.push('Product category is required');
+    if (!data.price || isNaN(data.price) || data.price <= 0) errors.push('Valid product price is required');
+    if (!data.stock || isNaN(data.stock) || data.stock < 0) errors.push('Valid product stock is required');
+    if (!data.email) errors.push('Email is required');
 
     return errors;
 };
 
-// @route POST /api/products
-router.post("/create-product", pupload.array("images"), async (req, res) => {
-    const { name, description, category, price, stock, email, tags } = req.body;
-    const images = req.files ? req.files.map((file) => `/products/${file.filename}`) : [];
+router.post('/create-product', pupload.array('images', 10), async (req, res) => {
 
-    const validationErrors = validateProductData({ name, description, category, price, stock, email, tags });
+    const { name, description, category, tags, price, stock, email } = req.body;
+    const images = req.files.map((file) => {
+        return `/products/${file.filename}`;
+    });
+
+    const validationErrors = validateProductData({ name, description, category, price, stock, email });
     if (validationErrors.length > 0) {
         return res.status(400).json({ errors: validationErrors });
     }
 
     if (images.length === 0) {
-        return res.status(400).json({ message: "No images are uploaded" });
+        return res.status(400).json({ error: 'At least one image is required' });
     }
 
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: "User not found" });
+            return res.status(400).json({ error: 'Email does not exist in the users database' });
         }
 
         const newProduct = new Product({
-            name, description, category, price, stock, email, tags, images,
-            user: user._id
+            name,
+            description,
+            category,
+            tags,
+            price,
+            stock,
+            email,
+            images,
         });
 
         await newProduct.save();
-        return res.status(201).json({ message: "Product created successfully", product: newProduct });
 
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Internal server error" });
+        res.status(201).json({
+            message: 'Product created successfully',
+            product: newProduct,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error. Could not create product.' });
     }
 });
 
-router.get("/get-products", async (req, res) => {
+// Route: Get all products
+router.get('/get-products', async (req, res) => {
     try {
         const products = await Product.find();
-        res.status(200).json({ products });
-    } catch (e) {
-        console.error("Error: ", e);
-        res.status(500).json({ error: "Server error." });
+        const productsWithFullImageUrl = products.map(product => {
+            if (product.images && product.images.length > 0) {
+                product.images = product.images.map(imagePath => {
+                    // Image URLs are already prefixed with /products
+                    return imagePath.replace(/\\/g, '/')
+                });
+            }
+            return product;
+        });
+        res.status(200).json({ products: productsWithFullImageUrl });
+        
+       // res.status(200).json({ products: products });
+    } catch (err) {
+        console.error(' Server error:', err);
+        res.status(500).json({ error: 'Server error. Could not fetch products.' });
     }
 });
 
-router.get("/my-products", async (req, res) => {
+
+router.get('/my-products', async (req, res) => {
     const { email } = req.query;
     try {
         const products = await Product.find({ email });
-        res.status(200).json({ products });
+        const productsWithFullImageUrl = products.map(product => {
+            if (product.images && product.images.length > 0) {
+                product.images = product.images.map(imagePath => {
+                    return imagePath.replace(/\\/g, '/')
+                });
+            }
+            return product;
+        });
+        res.status(200).json({ products: productsWithFullImageUrl });
+        // const productsWithFullImageUrl = products.map(product => {
+        //     if (product.images && product.images.length > 0) {
+        //         product.images = product.images.map((image) => `${image}`);
+        //         // product.images = product.images.map((file) => {
+        //         //     return `/products/${file.filename}`;
+        //        // });
+        //     }
+        //     return product;
+        // });
+       // res.status(200).json({ products: products });
     } catch (err) {
-        console.error("Server error: ", err);
-        res.status(500).json({ error: "Server error. Could not fetch products." });
+        console.error(' Server error:', err);
+        res.status(500).json({ error: 'Server error. Could not fetch products.' });
     }
-});
+}
+);
 
-router.get("/product/:id", async (req, res) => {
+router.get('/product/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const product = await Product.findById(id);
         if (!product) {
-            return res.status(400).json({ error: "Product not found" });
+            return res.status(404).json({ error: 'Product not found.' });
         }
         res.status(200).json({ product });
     } catch (err) {
-        console.log("Server Error", err.message);
-        res.status(500).json({ error: "Server error: Could not fetch data" });
+        console.error('Server error:', err);
+        res.status(500).json({ error: 'Server error. Could not fetch product.' });
     }
 });
 
-router.put("/update-product/:id", pupload.array("images", 10), async (req, res) => {
+router.put('/update-product/:id', pupload.array('images', 10), async (req, res) => {
     const { id } = req.params;
-    const { name, description, category, price, stock, email, tags } = req.body;
+    const { name, description, category, tags, price, stock, email } = req.body;
 
     try {
         const existingProduct = await Product.findById(id);
         if (!existingProduct) {
-            return res.status(400).json({ error: "Product not found" });
+            return res.status(404).json({ error: 'Product not found.' });
         }
 
         let updatedImages = existingProduct.images;
-        if (req.files && req.files.length > 0) {
-            updatedImages = req.files.map((file) => `/products/${path.basename(file.path)}`);
+        if (req.files || req.files.length > 0) {
+            updatedImages = req.files.map((file) => {
+                return `/products/${path.basename(file.path)}`;
+            });
         }
 
-        const validationErrors = validateProductsData({ name, description, category, price, stock, email, tags });
+        const validationErrors = validateProductData({
+            name,
+            description,
+            category,
+            price,
+            stock,
+            email,
+        });
+
         if (validationErrors.length > 0) {
             return res.status(400).json({ errors: validationErrors });
         }
 
-        Object.assign(existingProduct, { name, description, category, price, tags, email, stock, images: updatedImages });
+        existingProduct.name = name;
+        existingProduct.description = description;
+        existingProduct.category = category;
+        existingProduct.tags = tags;
+        existingProduct.price = price;
+        existingProduct.stock = stock;
+        existingProduct.email = email;
+        existingProduct.images = updatedImages;
 
         await existingProduct.save();
-        res.status(200).json({ message: "Updated successfully" });
 
-    } catch (e) {
-        console.log(e.message);
-        res.status(500).json({ error: "Server error during update" });
+        res.status(200).json({
+            message: '✅ Product updated successfully',
+            product: existingProduct,
+        });
+    } catch (err) {
+        console.error('Server error:', err);
+        res.status(500).json({ error: 'Server error. Could not update product.' });
     }
 });
 
-router.delete("/delete-product/:id", async (req, res) => {
+router.delete('/delete-product/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        const existingProduct = await Product.findByIdAndDelete(id);
+        const existingProduct = await Product.findById(id);
         if (!existingProduct) {
-            return res.status(404).json({ error: "Product not found" });
+            return res.status(404).json({ error: 'Product not found.' });
         }
 
-        res.status(200).json({ message: "Product deleted successfully" });
-    } catch (e) {
-        console.log(e.message);
-        res.status(500).json({ error: "Server error during deletion" });
+        await existingProduct.deleteOne();
+        res.status(200).json({ message: '✅ Product deleted successfully' });
+    } catch (err) {
+        console.error('Server error:', err);
+        res.status(500).json({ error: 'Server error. Could not delete product.' });
     }
 });
 
-router.post("/cart", async (req, res) => {
+router.post('/cart', async (req, res) => {
     try {
         const { userId, productId, quantity } = req.body;
         const email = userId;
 
-        if (!email) return res.status(400).json({ message: "Email is required" });
-        if (!mongoose.Types.ObjectId.isValid(productId)) return res.status(400).json({ message: "Invalid productId" });
-        if (!quantity || quantity < 1) return res.status(400).json({ message: "Quantity should be at least 1" });
+        if (!email) {
+            return res.status(400).json({ message: 'Email is required' });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            //Uses Mongoose to verify whether productId is a valid MongoDB ObjectId.
+            return res.status(400).json({ message: 'Invalid productId' });
+        }
+
+        if (!quantity || quantity < 1) {
+            return res.status(400).json({ message: 'Quantity must be at least 1' });
+        }
 
         const user = await User.findOne({ email });
-        if (!user) return res.status(400).json({ message: "User not found" });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
 
         const product = await Product.findById(productId);
-        if (!product) return res.status(404).json({ message: "Product not found" });
+        //Searches for the product by its productId using findById.
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
 
-        const cartItemIndex = user.cart.findIndex((item) => item.productId.toString() === productId);
+        const cartItemIndex = user.cart.findIndex(
+            //user.cart is assumed to be an array of objects, where each object represents a cart item.
+            //The .findIndex() method checks if a product with the given productId already exists in the user's cart.
+
+            (item) => item.productId.toString() === productId
+            //item.productId.toString() === productId converts productId to a string for a proper comparison.
+        );
+
 
         if (cartItemIndex > -1) {
             user.cart[cartItemIndex].quantity += quantity;
+            // If the product already exists in the cart (cartItemIndex > -1), its quantity is increased.
         } else {
             user.cart.push({ productId, quantity });
+            //If the product is not in the cart, a new cart item { productId, quantity } is added.
         }
 
-        await user.save();
-        res.status(200).json({ message: "Cart updated successfully" });
 
-    } catch (err) {
-        res.status(500).json({ error: "Server error" });
-        console.error(err.message);
+        await user.save();
+        //Saves the modified user document (with the updated cart) back to the database.
+
+        res.status(200).json({
+            message: 'Cart updated successfully',
+            cart: user.cart,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
     }
 });
 
+// GET cart details endpoint
 router.get('/cartproducts', async (req, res) => {
     try {
         const { email } = req.query;
@@ -187,31 +280,6 @@ router.get('/cartproducts', async (req, res) => {
     } catch (err) {
         console.error('Server error:', err);
         res.status(500).json({ error: 'Server Error' });
-    }
-});
-
-router.put("/cartproduct/quantity", async (req, res) => {
-    const { email, productId, quantity } = req.body;
-
-    if (!email || !productId || quantity === undefined) {
-        return res.status(400).json({ error: "Email, productId, and quantity are required" });
-    }
-
-    try {
-        const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ error: "User not found" });
-
-        const cartProduct = user.cart.find((item) => item.productId.toString() === productId);
-        if (!cartProduct) return res.status(404).json({ error: "Product not found in cart" });
-
-        cartProduct.quantity = quantity;
-        await user.save();
-
-        res.status(200).json({ message: "Cart updated successfully" });
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
     }
 });
 

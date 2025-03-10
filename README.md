@@ -74,8 +74,6 @@ This phase provided a foundation for:
 
 ---
 
-This phased approach ensures steady progression while cementing critical full-stack development concepts and best practices. Future milestones include expanding functionalities like product management, order processing, and optimizing the user experience.
----
 ## Milestone 6: Backend Endpoint for Secure Signup 
 
 ### Objectives
@@ -84,7 +82,6 @@ This milestone focuses on establishing a robust backend endpoint to support the 
 - Learn how to securely save comprehensive user data in the database.
 
 ---
-
 
 # Milestone 7: Backend User Login Endpoint with Password Validation 🔐
 
@@ -155,9 +152,6 @@ The implementation follows industry standards for **privacy** and **data protect
 
 ---
 
-
-
-
 # Milestone 8: Product Card Component & Homepage Layout 🎨✨
 
 ## Overview 📌
@@ -198,7 +192,6 @@ In this milestone, we developed a **frontend card component** for products and d
 
 ---
 
-
 ## Submission Progress 🚩
 - **Code Repository:** [GitHub Link](#)  
 - **README:** Updated with milestone details and implementation steps.  
@@ -206,39 +199,7 @@ In this milestone, we developed a **frontend card component** for products and d
 
 ---
 
-
-=======
-### Key Features
-1. **Password Encryption**:  
-   - Utilize `bcrypt` to hash passwords during signup.  
-   - Prevent storing plain-text passwords in the database.  
-
-2. **User Data Management**:  
-   - Store user details such as name, email, and encrypted passwords securely.  
-   - Ensure the database structure supports both scalability and security.  
-
-### Benefits of Encrypting Passwords
-- **Protect User Data**: Safeguards passwords in case of data breaches.  
-- **Enhance Privacy**: Prevents passwords from being visible to unauthorized individuals.  
-- **Regulatory Compliance**: Adheres to security standards like GDPR and PCI-DSS.  
-- **Mitigate Password Theft**: Makes it significantly harder for attackers to compromise accounts.
-
-### Steps for Implementation  
-Here’s how we’ll implement this in the live coding session:
-
-1. **Encrypt Passwords**:  
-   - Leverage `bcrypt` to generate a hash from the user’s password.  
-   - Store the hashed password instead of raw text in the database for added security.  
-
-2. **Database Integration**:  
-   - Design a schema to save all necessary user information, including encrypted passwords, efficiently.  
-   - Validate inputs to prevent unauthorized or malicious data entry.  
-
-This milestone empowers the application to store user data safely and securely, forming a strong foundation for reliable user authentication and privacy compliance.
-
-
-
-# Milestone 9: Product Input Form 📋
+## Milestone 9: Product Input Form 📋
 
 ## Overview 🚀
 In this milestone, we created a frontend form for taking product input details, including the ability to upload multiple images. The form serves as a starting point for managing product data in the application.
@@ -264,9 +225,6 @@ This lesson emphasized the foundation of creating and submitting product data. F
 ### Technologies Used 🛠️
 - **Frontend**: HTML, CSS, JavaScript
 - **Additional Features**: File input handling for multiple images.
-
-
-
 
 ## Milestone 10: Product Schema and Endpoint Creation
 
@@ -308,7 +266,6 @@ In this milestone, we focused on defining a Mongoose schema for products and cre
 - The repository is publicly accessible.
 - This README update summarizes the progress for **Milestone 10**.
 
-
 ## Milestone 11: Dynamic Home Page with Product Data
 
 Overview
@@ -339,7 +296,6 @@ Passed the received data to the product card component for dynamic rendering.
 
 Integrated the product listing into the home page.
 
-
 Submission:
 
 Code has been pushed to the GitHub repository.
@@ -347,7 +303,6 @@ Code has been pushed to the GitHub repository.
 The repository is publicly accessible.
 
 This README file summarizes the progress for Milestone 11.
-
 
 ## Milestone 12:
 
@@ -360,14 +315,6 @@ Data Fetching: Implemented a function on the frontend to fetch the product data 
 Dynamic Display: Utilized the existing product card component to dynamically render the list of products on the "My Products" page. Each product is displayed using a card format, enhancing the user interface and experience.
 
 This milestone successfully enhances the application by providing users with a personalized view of their added products.
-
-
-
-Sure! Here’s a suggested update for your README file to reflect the changes and functionalities introduced in Milestone 13:
-
----
-
-# Project Title
 
 ## Milestone 13: Edit Uploaded Products 🌟
 
