@@ -1,113 +1,116 @@
-import { IoIosAdd, IoIosRemove } from "react-icons/io";
-import { useEffect, useState } from "react";
-import PropTypes from "prop-types";
+//eslint-disable-next-line
+import React, { useState, useEffect } from "react";
+import { IoIosAdd } from "react-icons/io";
+import { IoIosRemove } from "react-icons/io";
+import PropTypes from "prop-types"; // Import PropTypes
 
-export default function CartProducts({ _id, name, images, quantity, price }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [quantityVal, setQuantityVal] = useState(quantity);
+export default function CartProduct({ _id, name, images, quantity, price }) {
+	const [currentIndex, setCurrentIndex] = useState(0);
+	const [quantityVal, setQuantityVal] = useState(quantity);
 
-  useEffect(() => {
-    if (!images || images.length === 0) return;
+	useEffect(() => {
+		if (!images || images.length === 0) return;
+		const interval = setInterval(() => {
+			setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+		}, 2000);
+		return () => clearInterval(interval);
+	}, [images]);
 
-    setCurrentIndex(0); // Reset when images change
+	const handleIncrement = () => {
+		const newquantityVal = quantityVal + 1;
+        setQuantityVal(newquantityVal);
+        updateQuantityVal(newquantityVal);
+	};
 
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 2000);
+	const handleDecrement = () => {
+        const newquantityVal = quantityVal > 1 ? quantityVal - 1 : 1;
+		setQuantityVal(newquantityVal);
+        updateQuantityVal(newquantityVal);
+	};
 
-    return () => clearInterval(interval);
-  }, [images]);
+    const updateQuantityVal = (quantity) => {
+        fetch('http://localhost:8000/api/v2/product/cartproduct/quantity', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: 'gowrishvarma@gmail.com',
+                productId: _id,
+                quantity,
+            }),
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
+            .then((data) => {
+                console.log('quantityVal updated:', data);
+            })
+            .catch((err) => {
+                console.error('Error updating quantityVal:', err);
+            });
+    };
 
-  const updateQuantityVal = async (quantity) => {
-    try {
-      const res = await fetch("http://localhost:8000/api/v2/product/cartproduct/quantity", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: "dips@gmail.com",
-          productId: _id,
-          quantity,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to update quantity");
-      }
-
-      const data = await res.json();
-      console.log("Updated quantity:", data);
-      setQuantityVal(quantity); // Only update if successful
-    } catch (err) {
-      console.error("Error updating quantity:", err);
-    }
-  };
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      updateQuantityVal(quantityVal);
-    }, 500);
-
-    return () => clearTimeout(timeout);
-  }, [quantityVal]);
-
-  const handleIncrement = () => setQuantityVal((prev) => prev + 1);
-  const handleDecrement = () => setQuantityVal((prev) => (prev > 1 ? prev - 1 : 1));
-
-  const currentImage = images?.[currentIndex] || "/placeholder.jpg"; // Fallback image
-
-  return (
-    <div className="h-max w-full p-4 flex justify-between border-b border-neutral-300 bg-neutral-100 rounded-lg">
-      <div className="flex flex-col gap-y-2">
-        <img
-          src={`http://localhost:8000${currentImage}`} // Fixed template literal
-          alt={name}
-          className="w-32 h-32 object-cover rounded-lg border border-neutral-300"
-        />
-        <div className="flex flex-row items-center gap-x-2 md:hidden">
-          <button
-            onClick={handleDecrement}
-            className="flex justify-center items-center bg-gray-200 hover:bg-gray-300 active:translate-y-1 p-2 rounded-xl"
-          >
-            <IoIosRemove />
-          </button>
-          <div className="px-5 py-1 text-center bg-gray-100 rounded-xl">{quantityVal}</div>
-          <button
-            onClick={handleIncrement}
-            className="flex justify-center items-center bg-gray-200 hover:bg-gray-300 active:translate-y-1 p-2 rounded-xl"
-          >
-            <IoIosAdd />
-          </button>
-        </div>
-      </div>
-      <div className="w-full flex flex-col justify-start items-start md:flex-row md:justify-between md:items-center px-4">
-        <p className="text-lg font-semibold">{name}</p>
-        <p className="text-lg font-semibold">${price * quantityVal}</p>
-        <div className="hidden md:flex flex-row items-center gap-x-2">
-          <button
-            onClick={handleDecrement}
-            className="flex justify-center items-center bg-gray-200 hover:bg-gray-300 active:translate-y-1 p-2 rounded-xl"
-          >
-            <IoIosRemove />
-          </button>
-          <div className="px-5 py-1 text-center bg-gray-100 rounded-xl">{quantityVal}</div>
-          <button
-            onClick={handleIncrement}
-            className="flex justify-center items-center bg-gray-200 hover:bg-gray-300 active:translate-y-1 p-2 rounded-xl"
-          >
-            <IoIosAdd />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+	const currentImage = images[currentIndex];
+	return (
+		<div className="h-max w-full p-4 flex justify-between border-b border-neutral-300 bg-neutral-100 rounded-lg">
+			<div className="flex flex-col gap-y-2">
+				<img
+					src={`http://localhost:8000${currentImage}`} // Ensure the URL is correct\
+					alt={name}
+					className="w-32 h-32 object-cover rounded-lg border border-neutral-300"
+				/>
+				<div className="flex flex-row items-center gap-x-2 md:hidden">
+					<div
+						onClick={handleIncrement}
+						className="flex justify-center items-center bg-gray-200 hover:bg-gray-300 active:translate-y-1 p-2 rounded-xl cursor-pointer"
+					>
+						<IoIosAdd />
+					</div>
+					<div className="px-5 py-1 text-center bg-gray-100 rounded-xl pointer-events-none">
+						{quantityVal}
+					</div>
+					<div
+						onClick={handleDecrement}
+						className="flex justify-center items-center bg-gray-200 hover:bg-gray-300 active:translate-y-1 p-2 rounded-xl cursor-pointer"
+					>
+						<IoIosRemove />
+					</div>
+				</div>
+			</div>
+            <div className="w-full flex flex-col justify-start items-start md:flex-row md:justify-between md:items-center px-4">
+                <p className="text-lg font-semibold">{name}</p>
+                <p className="text-lg font-semibold">${price*quantityVal}</p>
+                <div className="hidden md:flex flex-row items-center gap-x-2 ">
+					<div
+						onClick={handleIncrement}
+						className="flex justify-center items-center bg-gray-200 hover:bg-gray-300 active:translate-y-1 p-2 rounded-xl cursor-pointer"
+					>
+						<IoIosAdd />
+					</div>
+					<div className="px-5 py-1 text-center bg-gray-100 rounded-xl pointer-events-none">
+						{quantityVal}
+					</div>
+					<div
+						onClick={handleDecrement}
+						className="flex justify-center items-center bg-gray-200 hover:bg-gray-300 active:translate-y-1 p-2 rounded-xl cursor-pointer"
+					>
+						<IoIosRemove />
+					</div>
+				</div>
+            </div>
+			
+		</div>
+	);
 }
 
-CartProducts.propTypes = {
-  _id: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  images: PropTypes.arrayOf(PropTypes.string),
-  quantity: PropTypes.number.isRequired,
-  price: PropTypes.number.isRequired,
+CartProduct.propTypes = {
+  _id:PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired, // Ensure name is a required string
+  images: PropTypes.arrayOf(PropTypes.string), // Ensure images is an array of strings
+  quantity: PropTypes.string.isRequired, // Ensure description is a required string
+  price: PropTypes.number.isRequired, // Ensure price is a required number
 };

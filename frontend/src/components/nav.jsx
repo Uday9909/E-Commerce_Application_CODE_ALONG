@@ -1,7 +1,8 @@
+//eslint-disable-next-line
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-const Navbar = () => {
+const NavBar = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -9,135 +10,201 @@ const Navbar = () => {
     };
 
     return (
-        <nav className='bg-gradient-to-r from-blue-500 to-purple-600'>
-            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-                <div className='flex justify-between h-16'>
-                    <div className='flex items-center md:hidden'>
+        <nav className=" bg-gradient-to-r from-blue-500 to-purple-600">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between h-16">
+                    {/* Hamburger Menu Button (visible on mobile) */}
+                    <div className="flex items-center md:hidden">
                         <button
                             onClick={toggleMenu}
-                            type='button'
-                            className='text-gray-200 hover:text-white focus:outline-none focus:text-white'
-                            aria-controls='mobile-menu'
-                            aria-expanded={isOpen}>
-                            <span className='sr-only'>Only Main Menu</span>
+                            type="button"
+                            className="text-gray-200 hover:text-white focus:outline-none focus:text-white"
+                            aria-controls="mobile-menu"
+                            aria-expanded={isOpen}
+                        >
+                            <span className="sr-only">Open main menu</span>
                             {!isOpen ? (
                                 <svg
-                                    className='h-6 w-6'
-                                    xmlns='http://www.w3.org/2000/svg'
-                                    fill='none'
-                                    viewBox='0 0 24 24'
-                                    stroke='currentColor'>
+                                    className="h-6 w-6"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
                                     <path
-                                        strokeLinecap='round'
-                                        strokeLinejoin='round'
-                                        strokeWidth='2'
-                                        d='M4 6h16M4 12h16M4 18h16'
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M4 6h16M4 12h16M4 18h16"
                                     />
                                 </svg>
                             ) : (
+                                // Close Icon
                                 <svg
-                                    className='h-6 w-6'
-                                    xmlns='http://www.w3.org/2000/svg'
-                                    fill='none'
-                                    viewBox='0 0 24 24'
-                                    stroke='currentColor'>
+                                    className="h-6 w-6"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
                                     <path
-                                        strokeLinecap='round'
-                                        strokeLinejoin='round'
-                                        strokeWidth='2'
-                                        d='M6 18L18 6M6 6l12 12'
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M6 18L18 6M6 6l12 12"
                                     />
                                 </svg>
                             )}
                         </button>
                     </div>
-                    <div className='hidden md:flex md:items-center md:justify-center w-full'>
-                        <ul className='flex space-x-6'>
+
+                    <div className="hidden md:flex md:items-center md:justify-center w-full">
+                        <ul className="flex space-x-6">
                             <li>
                                 <NavLink
-                                    to='/'
+                                    to="/"
                                     end
                                     className={({ isActive }) =>
                                         isActive
-                                            ? 'text-white font-semibold px-3 py-2 rounded-md'
-                                            : 'text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm transition-colors duration-200'
-                                    }>
-                                    Products
+                                            ? "text-white font-semibold px-3 py-2 rounded-md text-sm transition-colors duration-200"
+                                            : "text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm transition-colors duration-200"
+                                    }
+                                >
+                                    Home
                                 </NavLink>
                             </li>
                             <li>
                                 <NavLink
-                                    to='/myproducts'
-                                    end
+                                    to="/myproducts"
                                     className={({ isActive }) =>
                                         isActive
-                                            ? 'text-white font-semibold px-3 py-2 rounded-md'
-                                            : 'text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm transition-colors duration-200'
-                                    }>
+                                            ? "text-white font-semibold px-3 py-2 rounded-md text-sm transition-colors duration-200"
+                                            : "text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm transition-colors duration-200"
+                                    }
+                                >
                                     My Products
                                 </NavLink>
                             </li>
                             <li>
                                 <NavLink
-                                    to='/product'
-                                    end
+                                    to="/create-product"
                                     className={({ isActive }) =>
                                         isActive
-                                            ? 'text-white font-semibold px-3 py-2 rounded-md'
-                                            : 'text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm transition-colors duration-200'
-                                    }>
+                                            ? "text-white font-semibold px-3 py-2 rounded-md text-sm transition-colors duration-200"
+                                            : "text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm transition-colors duration-200"
+                                    }
+                                >
                                     Add Products
                                 </NavLink>
                             </li>
                             <li>
                                 <NavLink
-                                    to='/cart'
-                                    end
+                                    to="/cart"
                                     className={({ isActive }) =>
                                         isActive
-                                            ? 'text-white font-semibold px-3 py-2 rounded-md'
-                                            : 'text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm transition-colors duration-200'
-                                    }>
+                                            ? "text-white font-semibold px-3 py-2 rounded-md text-sm transition-colors duration-200"
+                                            : "text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm transition-colors duration-200"
+                                    }
+                                >
                                     Cart
                                 </NavLink>
                             </li>
+    
+                    {/*Add this new code*/}
 
-                            <li>
+                             <li>
                                 <NavLink
-                                    to='/profile'
-                                    end
+                                    to="/profile"
                                     className={({ isActive }) =>
                                         isActive
-                                            ? 'text-white font-semibold px-3 py-2 rounded-md'
-                                            : 'text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm transition-colors duration-200'
+                                            ? "text-white font-semibold px-3 py-2 rounded-md text-sm transition-colors duration-200"
+                                            : "text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm transition-colors duration-200"
                                     }
-                                    onClick={() => setIsOpen(false)}
-                                    >
+                                >
                                     Profile
                                 </NavLink>
-                            </li>        
+                            </li>
 
                         </ul>
                     </div>
                 </div>
             </div>
+
             {/* Mobile Menu */}
             {isOpen && (
-                <div className='md:hidden' id='mobile-menu'>
-                    <ul className='px-2 pt-2 pb-3 space-y-1 sm:px-3'>
+                <div className="md:hidden" id="mobile-menu">
+                    <ul className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                         <li>
                             <NavLink
-                                to='/'
+                                to="/"
                                 end
                                 className={({ isActive }) =>
                                     isActive
-                                        ? 'text-white font-semibold px-3 py-2 rounded-md'
-                                        : 'text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm transition-colors duration-200'
+                                        ? "block text-white font-semibold px-3 py-2 rounded-md text-base transition-colors duration-200"
+                                        : "block text-gray-200 hover:text-white px-3 py-2 rounded-md text-base transition-colors duration-200"
                                 }
-                                onClick={() => setIsOpen(false)}> //close the link on clicking menu
+                                onClick={() => setIsOpen(false)} // Close menu on link click
+                            >
                                 Home
                             </NavLink>
                         </li>
+                        <li>
+                            <NavLink
+                                to="/myproducts"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? "block text-white font-semibold px-3 py-2 rounded-md text-base transition-colors duration-200"
+                                        : "block text-gray-200 hover:text-white px-3 py-2 rounded-md text-base transition-colors duration-200"
+                                }
+                                onClick={() => setIsOpen(false)}
+                            >
+                                My Products
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink
+                                to="/addproducts"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? "block text-white font-semibold px-3 py-2 rounded-md text-base transition-colors duration-200"
+                                        : "block text-gray-200 hover:text-white px-3 py-2 rounded-md text-base transition-colors duration-200"
+                                }
+                                onClick={() => setIsOpen(false)}
+                            >
+                                Add Products
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink
+                                to="/cart"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? "block text-white font-semibold px-3 py-2 rounded-md text-base transition-colors duration-200"
+                                        : "block text-gray-200 hover:text-white px-3 py-2 rounded-md text-base transition-colors duration-200"
+                                }
+                                onClick={() => setIsOpen(false)}
+                            >
+                                Cart
+                            </NavLink>
+                        </li>
+
+                        {/*Add this new code*/}
+                        
+                        <li>
+                            <NavLink
+                                to="/profile"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? "block text-white font-semibold px-3 py-2 rounded-md text-base transition-colors duration-200"
+                                        : "block text-gray-200 hover:text-white px-3 py-2 rounded-md text-base transition-colors duration-200"
+                                }
+                                onClick={() => setIsOpen(false)}
+                            >
+                                Profile
+                            </NavLink>
+                        </li>
+                        
+
                     </ul>
                 </div>
             )}
@@ -145,4 +212,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default NavBar;

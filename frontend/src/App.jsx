@@ -1,27 +1,31 @@
 import './App.css'
+// eslint-disable-next-line 
+import React from 'react'
+import {BrowserRouter,Routes,Route} from 'react-router-dom';
+import {LoginPage, SignupPage, Home, CreateProduct, MyProducts, Cart, ProductDetails, Profile, CreateAddress, SelectAddress} from "./Routes/routes.js";
 
-import React from 'react';
-import {BrowserRouter , Routes, Route} from 'react-router-dom';
-import {ProductDetails, SignupPage, CreateAddress} from './Routes/routes.js';
-import {Home, LoginPage} from "./Routes/routes.js";
-import {CreateProduct,MyProducts,Cart,Profile} from "./Routes/routes.js";
-
-const App=()=> {
+const App = () => {
   return (
     <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Home/>}/>
-      <Route path="/login" element={<LoginPage />} />
+      <Route path='/' element={<Home/>}/>
+      <Route path='/login' element={<LoginPage/>}/>
       <Route path='/signup' element={<SignupPage/>}/>
-      <Route path='/product' element={<CreateProduct/>}/>
-      <Route path='/product/:id' element={<CreateProduct/>}/>
-      <Route path='/myproducts' element={<MyProducts/>}/>
-      <Route path='/cart' element={<Cart/>}/>
-      <Route path='/productdetails/:id' element={<ProductDetails/>}/>
-      <Route path='/profile' element={<Profile/>}/>
+      <Route path='/create-product' element={<CreateProduct/>}/>
+      <Route path="/myproducts" element={<MyProducts/>} />
+      {/* For edit product by id */}
+      <Route path="/create-product/:id" element={<CreateProduct />} />
+      <Route path="/cart" element={<Cart />} />
+      <Route path="/product/:id" element={<ProductDetails />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/create-address" element={<CreateAddress />} />
+      <Route path="/select-address" element={<SelectAddress />} />
+
     </Routes>
     </BrowserRouter>
   )
 }
+
+
+
 export default App
