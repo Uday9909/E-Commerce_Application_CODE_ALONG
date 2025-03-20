@@ -662,5 +662,23 @@ By the end of this milestone, we have:
 3. Displayed the total value of the cart.
 4. Added a "Place Order" button at the bottom to confirm the order.
 
+# Milestone 25: Place Order Endpoint
+
+## 🚀 Introduction
+Welcome to Milestone 25! In this milestone, we have implemented a backend endpoint that allows users to place orders. This functionality ensures that each product in the order is processed separately while sharing the same address details.
+
+## 🎯 Learning Goals
+By completing this milestone, you will:
+- Develop a backend endpoint for placing an order.
+- Retrieve user details using their email.
+- Store order details in the MongoDB `orders` collection using the predefined schema.
+
+## 📝 Implementation Steps
+1. **Create the Order Endpoint**: Develop an API endpoint that accepts user details, address, and product information.
+2. **Retrieve User ID**: Extract the user's email from the request and use it to find the corresponding `_id` from the `users` collection.
+3. **Process Each Product Separately**: For every product in the request, create a separate order while maintaining the same address.
+4. **Store Orders in MongoDB**: Use the existing `Order` schema to save order details in the `orders` collection.
+
+
 ### **Completion Note:**
 The order confirmation page has been successfully implemented, providing users with a clear overview of their order details before placing it.
