@@ -682,3 +682,16 @@ By completing this milestone, you will:
 
 ### **Completion Note:**
 The order confirmation page has been successfully implemented, providing users with a clear overview of their order details before placing it.
+
+# 🏆 Milestone 26: Create Backend Endpoint for Placing Orders  
+ 
+## 🎯 Learning Goals  
+By the end of this milestone, you will:  
+
+✅ Create a backend endpoint to retrieve all orders of a user.  
+
+## 📝 Steps for Milestone 26  
+1. Create an endpoint that receives the user's email.  
+2. Use the email to retrieve the `_id` of the user from the database.  
+3. Fetch all orders associated with that `_id`.  
+4. Send the retrieved orders as a response.  

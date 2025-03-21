@@ -1,13 +1,12 @@
-//eslint-disable-next-line
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import Nav from '../components/nav';
+import Nav from "../components/nav";
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const OrderConfirmation = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { addressId, email } = location.state || {};
+    const {addressId, email} = location.state || {};
 
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [cartItems, setCartItems] = useState([]);
@@ -16,19 +15,17 @@ const OrderConfirmation = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!addressId || !email) {
-            navigate('/select-address'); // Redirect if no address selected or email missing
-            return;
+        if(!addressId || !email) {
+            navigate('/select-address');
         }
 
         const fetchData = async () => {
             try {
-                // Fetch selected address
                 const addressResponse = await axios.get('http://localhost:8000/api/v2/user/addresses', {
-                    params: { email: email },
+                    params: {email: email},
                 });
 
-                if (addressResponse.status !== 200) {
+                if(addressResponse.status !== 200) {
                     throw new Error(`Failed to fetch addresses. Status: ${addressResponse.status}`);
                 }
 
@@ -50,7 +47,6 @@ const OrderConfirmation = () => {
 
                 const cartData = cartResponse.data;
 
-                // Map cart items to include full image URLs
                 const processedCartItems = cartData.cart.map(item => ({
                     _id: item.productId._id,
                     name: item.productId.name,
@@ -58,14 +54,14 @@ const OrderConfirmation = () => {
                     images: item.productId.images.map(imagePath => `http://localhost:8000${imagePath}`),
                     quantity: item.quantity,
                 }));
+
                 setCartItems(processedCartItems);
 
-                // Calculate total price
                 const total = processedCartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
                 setTotalPrice(total);
-            } catch (err) {
+            } catch(err) {
                 console.error('Error fetching data:', err);
-                setError(err.response?.data?.message || err.message || 'An unexpected error occurred.');
+                setError(err.response?.data?.message || err.message || 'An unexpexted error occurred');
             } finally {
                 setLoading(false);
             }
@@ -75,36 +71,37 @@ const OrderConfirmation = () => {
     }, [addressId, email, navigate]);
 
     const handlePlaceOrder = async () => {
-        try {
-            setLoading(true);
-            const response = await axios.post('http://localhost:8000/api/v2/order/place', {
+        try{
+            const orderItems = cartItems.map(item => ({
+                product: item_id,
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+                image: item.images && item.images.length > 0 ? item.images[0] : '/default-avatar.png'
+            }));
+            const payload = {
                 email,
-                addressId,
-            });
+                shippingAddress: selectedAddress,
+                orderItems,
+            };
 
-            if (response.status !== 200 && response.status !== 201) {
-                throw new Error(response.data.message || 'Failed to place order.');
-            }
-
-            const data = response.data;
-            console.log('Order placed:', data.order);
-            navigate('/order-success', { state: { order: data.order } });
-        } catch (err) {
-            console.error('Error placing order:', err);
-            setError(err.response?.data?.message || err.message || 'An unexpected error occurred while placing the order.');
-        } finally {
-            setLoading(false);
+            const response = await axios.post('http://localhost:8000/api/v2/orders/place-order', payload);
+            console.log('Orders placed successfully!', response.data);
+            navigate('/order-success');
+        } catch(error) {
+            console.error('Error placing the orders:', error);
         }
     };
 
     if (loading) {
         return (
             <div className='w-full h-screen flex justify-center items-center'>
-                <p className='text-lg'>Processing...</p>
+                <p className='text-lg'>Loading addresses...</p>
             </div>
         );
     }
 
+    // Render error state
     if (error) {
         return (
             <div className='w-full h-screen flex flex-col justify-center items-center'>
@@ -177,7 +174,7 @@ const OrderConfirmation = () => {
                         <p className='text-xl font-semibold'>Total: ${totalPrice.toFixed(2)}</p>
                     </div>
 
-                    {/* Payment Method */}
+                        {/* Payment Method */}
                     <div className='mb-6'>
                         <h3 className='text-xl font-medium mb-2'>Payment Method</h3>
                         <div className='p-4 border rounded-md'>
@@ -198,6 +195,6 @@ const OrderConfirmation = () => {
             </div>
         </div>
     );
-};
+}
 
-export default OrderConfirmation;
+export default OrderConfirmation; 
