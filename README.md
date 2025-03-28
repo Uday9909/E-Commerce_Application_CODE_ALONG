@@ -695,3 +695,71 @@ By the end of this milestone, you will:
 2. Use the email to retrieve the `_id` of the user from the database.  
 3. Fetch all orders associated with that `_id`.  
 4. Send the retrieved orders as a response.  
+
+
+## **Milestone 27: Implementing the My Orders Page for Seamless Order Tracking** ##
+📦 My Orders Page
+
+🌟 Overview
+
+The My Orders page allows users to view all their past and ongoing orders in one place. This page fetches order details from the backend and displays them in an organized manner.
+
+✨ Features
+
+🔄 Fetch and display all user orders by making a GET request to the /my-orders endpoint.
+
+📧 Orders are retrieved based on the user's email.
+
+📋 Orders are presented in a user-friendly format.
+
+🏠 Integrated into the navigation bar for easy access.
+
+
+📝 Implementation Steps
+
+🖥 Create the My Orders Page
+
+Develop a React component to display user orders.
+
+📡 Fetch User Orders
+
+Send a GET request to the /my-orders endpoint.
+
+Pass the user’s email to retrieve their orders.
+
+📑 Display Orders
+
+Format and show the fetched data in a structured layout.
+
+🔗 Add Page to Navbar
+
+Ensure smooth navigation by linking the My Orders page in the navbar.
+
+
+## **Milestone 28: ❌ Cancel Order Feature** ##
+
+## 🌟 Overview
+The **Cancel Order** feature allows users to cancel their placed orders. This involves updating both the frontend and backend to support order cancellation.
+
+## ✨ Features
+- 🛑 Add a **Cancel Order** button next to each active order on the **My Orders** page.
+- 🚫 The cancel button will be hidden for orders that are already canceled.
+- 🔄 Create a **backend endpoint** to handle order cancellation.
+- ✅ Update the order status to **"Canceled"** in the database.
+
+
+## 📝 Implementation Steps
+1. **🖥 Update My Orders Page**
+   - Add a **Cancel Order** button next to each order.
+   - Hide the button for orders that are already canceled.
+2. **🔧 Create Cancel Order Endpoint**
+   - Develop a new **POST** endpoint: `/cancel-order`.
+   - Receive `orderId` in the request payload.
+   - Fetch the order using this ID, update its status to "Canceled," and save it.
+3. **🔄 Integrate API with Frontend**
+   - On clicking the **Cancel Order** button, send a request to the backend.
+   - Update the UI to reflect the canceled order status.
+
+
+## 🎯 Conclusion
+This milestone enhances the **My Orders** page by allowing users to cancel their orders when needed. It helps in understanding how to modify order statuses and manage data updates dynamically.
