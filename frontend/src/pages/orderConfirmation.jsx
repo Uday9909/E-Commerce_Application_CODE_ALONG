@@ -73,7 +73,7 @@ const OrderConfirmation = () => {
     const handlePlaceOrder = async () => {
         try{
             const orderItems = cartItems.map(item => ({
-                product: item_id,
+                product: item._id,
                 name: item.name,
                 quantity: item.quantity,
                 price: item.price,
@@ -81,9 +81,18 @@ const OrderConfirmation = () => {
             }));
             const payload = {
                 email,
-                shippingAddress: selectedAddress,
+                shippingAddress: {
+                    address1: selectedAddress.address1,
+                    address2: selectedAddress.address2 || "",
+                    city: selectedAddress.city,
+                    state: selectedAddress.state,
+                    zipCode: selectedAddress.zipCode, 
+                    country: selectedAddress.country
+                },
                 orderItems,
             };
+            console.log("Payload being sent:", payload);
+
 
             const response = await axios.post('http://localhost:8000/api/v2/orders/place-order', payload);
             console.log('Orders placed successfully!', response.data);
@@ -96,7 +105,7 @@ const OrderConfirmation = () => {
     if (loading) {
         return (
             <div className='w-full h-screen flex justify-center items-center'>
-                <p className='text-lg'>Loading addresses...</p>
+                <p className='text-lg'>Processing...</p>
             </div>
         );
     }

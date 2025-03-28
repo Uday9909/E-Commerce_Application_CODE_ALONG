@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const Order = require('../model/order');
@@ -27,20 +26,20 @@ router.post('/place-order', async(req, res) => {
         const orderPromises = orderItems.map(async (item) => {
             const totalAmount = item.price*item.quantity;
             const order = new Order({
-                user: user.id,
-                orderItems: [item],
+                user: user._id,
+                orderItems,
                 shippingAddress,
-                totalAmount
+                totalAmount,
             });
             return order.save();
         });
 
-        const order = await Promise.all(orderPromises);
+        const orders = await Promise.all(orderPromises);
 
         //clear user's cart after placing the order
         await Cart.deleteMany({user: user._id});
 
-        res.status(201).json({message: 'Orders placed and cart cleared successfully',order})
+        res.status(201).json({message: 'Orders placed and cart cleared successfully',orders})
     }
     catch(error) {
         console.error('Error placing orders:', error);
@@ -65,6 +64,27 @@ router.get('/my-orders', async (req, res) => {
         res.status(200).json({orders});
     } catch(error) {
         console.error('Error fetching the order:', error);
+        res.status(500).json({message: error.message});
+    }
+});
+
+router.patch('/cancel-order/:orderId', async (req, res) => {
+    try {
+        const {orderId} = req.params;
+
+        const order = await Order.findById(orderId);
+        console.log(order);
+
+        if(!order) {
+            return res.status(404).json({message: 'Order not found'});
+        }
+
+        order.orderStatus = 'Cancelled';
+        await order.save();
+
+        res.status(200).json({message: 'Order cancelled successfully'});
+    } catch(error) {
+        console.error('Error cancelling the order:', error);
         res.status(500).json({message: error.message});
     }
 });
