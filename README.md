@@ -763,3 +763,39 @@ The **Cancel Order** feature allows users to cancel their placed orders. This in
 
 ## 🎯 Conclusion
 This milestone enhances the **My Orders** page by allowing users to cancel their orders when needed. It helps in understanding how to modify order statuses and manage data updates dynamically.
+
+# Milestone 29: PayPal Payment Gateway Integration ✅
+
+## 🌟 Overview
+In this milestone, I successfully integrated the PayPal payment gateway into my application, allowing users to choose between Cash on Delivery (COD) and online payment via PayPal.
+
+## 🎯 What I Accomplished
+By completing this milestone, I:
+- Successfully implemented the PayPal API.
+- Enabled secure online payments within the application.
+- Provided users with a seamless choice between COD and PayPal payment.
+
+## 🛠 Implementation Steps
+
+### 1️⃣ Set Up PayPal Developer Account
+- Created a developer account on the [PayPal Developer Dashboard](https://developer.paypal.com/).
+- Set up a **Sandbox Account** for testing transactions.
+- Retrieved and saved the **User ID** and **Client ID** from PayPal for API integration.
+
+### 2️⃣ Added Payment Options to Order Confirmation Page
+- Implemented **radio buttons** for payment selection:
+  - **Cash on Delivery (COD)**
+  - **Online Payment via PayPal**
+- Configured PayPal buttons to dynamically appear when the **Online Payment** option is selected.
+
+### 3️⃣ Successfully Integrated PayPal Payments
+- Ensured PayPal payment buttons display correctly.
+- Connected the application to PayPal’s API for secure transactions.
+- Successfully processed test transactions in sandbox mode.
+
+## 📌 Features Implemented
+✅ Sandbox test account setup
+✅ PayPal Client ID configuration
+✅ Payment selection with radio buttons
+✅ Dynamic rendering of PayPal buttons
+✅ Secure online payment integration

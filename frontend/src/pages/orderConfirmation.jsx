@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import Nav from "../components/nav";
 import { useLocation, useNavigate } from 'react-router-dom';
+import {PayPalScriptProvider,PayPalButtons} from '@paypal/react-paypal-js';
 
 const OrderConfirmation = () => {
     const location = useLocation();
@@ -13,6 +14,8 @@ const OrderConfirmation = () => {
     const [totalPrice, setTotalPrice] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+        const [paymentMethod,setPaymentMethod]=useState('cod');
 
     useEffect(() => {
         if(!addressId || !email) {
@@ -61,7 +64,7 @@ const OrderConfirmation = () => {
                 setTotalPrice(total);
             } catch(err) {
                 console.error('Error fetching data:', err);
-                setError(err.response?.data?.message || err.message || 'An unexpexted error occurred');
+                setError(err.response?.data?.message || err.message || 'An unexpected error occurred');
             } finally {
                 setLoading(false);
             }
@@ -70,7 +73,7 @@ const OrderConfirmation = () => {
         fetchData();
     }, [addressId, email, navigate]);
 
-    const handlePlaceOrder = async () => {
+    const handlePlaceOrder = async (paymentType='cod', paypalOrderData=null) => {
         try{
             const orderItems = cartItems.map(item => ({
                 product: item._id,
@@ -90,9 +93,10 @@ const OrderConfirmation = () => {
                     country: selectedAddress.country
                 },
                 orderItems,
+                paymentMethod:paymentType,
+                paypalOrderData,
             };
             console.log("Payload being sent:", payload);
-
 
             const response = await axios.post('http://localhost:8000/api/v2/orders/place-order', payload);
             console.log('Orders placed successfully!', response.data);
@@ -182,28 +186,84 @@ const OrderConfirmation = () => {
                     <div className='mb-6 flex justify-end'>
                         <p className='text-xl font-semibold'>Total: ${totalPrice.toFixed(2)}</p>
                     </div>
-
-                        {/* Payment Method */}
-                    <div className='mb-6'>
+                        {/* Payment Method (Cash on Delivery or PayPal) */}
+                     <div className='mb-6'>
                         <h3 className='text-xl font-medium mb-2'>Payment Method</h3>
-                        <div className='p-4 border rounded-md'>
-                            <p>Cash on Delivery</p>
+                        <div className='p-4 border rounded-md space-x-4'>
+                            <label className='mr-4'>
+                                <input
+                                    type='radio'
+                                    name='paymentMethod'
+                                    value='cod'
+                                    checked={paymentMethod === 'cod'}
+                                    onChange={() => setPaymentMethod('cod')}
+                                />
+                                <span className='ml-2'>Cash on Delivery</span>
+                            </label>
+                            <label>
+                                <input
+                                    type='radio'
+                                    name='paymentMethod'
+                                    value='paypal'
+                                    checked={paymentMethod === 'paypal'}
+                                    onChange={() => setPaymentMethod('paypal')}
+                                />
+                                <span className='ml-2'>Pay Online (PayPal)</span>
+                            </label>
                         </div>
-                    </div>
+                            {paymentMethod === 'paypal' && (
+                            <div className='mt-4' style={{ maxWidth: '500px' }}>
+                                <PayPalScriptProvider
+                                    options={{
+                                        'client-id': 'AapgmGvxFKztKUaQw6VRpPa6sRVD7AwV7sUTvvZYZUxtKBPBClzXCSxFgCbfh9rUaoQWlUqoE2cscrh7', 
+                                    }}
+                                >
+                                    <PayPalButtons
+                                        style={{ layout: 'vertical' }}
+                                        createOrder={(data, actions) => {
+                                            return actions.order.create({
+                                                purchase_units: [
+                                                    {
+                                                        amount: {
+                                                            value: totalPrice.toFixed(2),
+                                                        },
+                                                    },
+                                                ],
+                                            });
+                                        }}
+                                        onApprove={async (data, actions) => {
+                                            // Captures funds from the transaction
+                                            const order = await actions.order.capture();
+                                            console.log('PayPal order success:', order);
 
-                    {/* Place Order Button */}
-                    <div className='flex justify-center'>
-                        <button
-                            onClick={handlePlaceOrder}
-                            className='bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 transition-colors'
-                        >
-                            Place Order
-                        </button>
+                                            // Call place order with PayPal data
+                                            handlePlaceOrder('paypal', order);
+                                        }}
+                                        onError={(err) => {
+                                            console.error('PayPal checkout error:', err);
+                                        }}
+                                    />
+                                </PayPalScriptProvider>
+                            </div>
+                        )}
                     </div>
+                    {/* Place Order Button (for COD) */}
+                    {paymentMethod === 'cod' && (
+                        <div className='flex justify-center'>
+                            <button
+                                onClick={() => handlePlaceOrder('cod', null)}
+                                className='bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 transition-colors'
+                            >
+                                Place Order
+                            </button>
+                        </div>
+                    )}
+
+                  
                 </div>
             </div>
         </div>
     );
 }
 
-export default OrderConfirmation; 
+export default OrderConfirmation;
