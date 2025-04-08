@@ -808,3 +808,37 @@ After setting up our sandbox account and getting the User ID in Milestone 29, we
 - Installing the `react-paypal-js` package
 - Using `PayPalScriptProvider` to enable smooth payment options like credit and debit cards 💸
 - Seamlessly connecting our app with PayPal using the client key 🔑
+
+
+## **🌟 Milestone 31: Managing Global State with Redux** ##
+
+Welcome to Milestone 31!  
+In this task, I explored how to handle **global state** in a React application using **Redux**.
+
+---
+
+## 🎯 What I Learned
+
+- Setting up Redux in a React project  
+- Creating a Redux store to manage global state  
+- Writing and dispatching actions  
+- Accessing global state across different components
+
+
+
+### 2. Created the Store Folder
+
+I made a new folder called `store` and added two files inside it:
+- `store.js` — to define and configure the Redux store
+- `userActions.js` — to handle user-related actions
+
+---
+
+### 3. Configured the Redux Store
+
+
+
+### 4. Wrote the Action Function
+
+
+### 5. Connected Redux to the App
