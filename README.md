@@ -799,3 +799,12 @@ By completing this milestone, I:
 ✅ Payment selection with radio buttons
 ✅ Dynamic rendering of PayPal buttons
 ✅ Secure online payment integration
+
+## **💳 Milestone 30: PayPal Payment Integration** ##
+
+In this milestone, we integrated **online payments** using the **PayPal API**! 💥  
+After setting up our sandbox account and getting the User ID in Milestone 29, we moved forward by:
+
+- Installing the `react-paypal-js` package
+- Using `PayPalScriptProvider` to enable smooth payment options like credit and debit cards 💸
+- Seamlessly connecting our app with PayPal using the client key 🔑
