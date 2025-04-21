@@ -1,20 +1,23 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import axios from "axios";
 import Nav from "../components/nav";
+import { useSelector } from 'react-redux';
 
 
 const MyOrdersPage = () => {
     const [orders, setOrders] = useState([]);
-    const defaultEmail = 'dips@gmail.com';
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const fetchOrders = async () => {
+    const email = useSelector((state) => state.user.email);
+
+    const fetchOrders = useCallback(async () => {
+        if (!email) return;
         try{
             setLoading(true);
             setError('');
             const response = await axios.get('http://localhost:8000/api/v2/orders/my-orders', {
-                params: {email: defaultEmail},
+                params: {email},
             });
             setOrders(response.data.orders);
         } catch(err) {
@@ -22,7 +25,7 @@ const MyOrdersPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [email]);
 
     const cancelOrder = async (orderId) => {
         console.log("order cancel");
@@ -33,7 +36,8 @@ const MyOrdersPage = () => {
             prevOrders.map((order) => 
             order._id === orderId ? {...order, status:response.data.order.status}: order)
             );
-            fetchOrders();
+            
+           await fetchOrders();
         } catch(err) {
             console.error(err);
             alert(err.response?.data?.message || 'Error in cancelling the order');
@@ -42,7 +46,7 @@ const MyOrdersPage = () => {
     
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [fetchOrders]);
 
     return (
         <>

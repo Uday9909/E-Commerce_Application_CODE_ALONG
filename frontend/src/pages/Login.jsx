@@ -2,11 +2,16 @@ import { useState } from "react";
 import axios from "axios";
 import {AiOutlineEye, AiOutlineEyeInvisible} from "react-icons/ai";
 import {Link} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {useDispatch} from "react-redux";
-import {setemail} from "../../store/userActions";
+import { setemail } from "@/store/userAction";
+
+axios.defaults.withCredentials = true;
 
 function Login() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -15,17 +20,17 @@ function Login() {
 
     const handleClickLogin = async (event) => {
       event.preventDefault();
-      // Add Axios for login functionality
-      console.log("email:", email, "password", password)
 
       try {
         const response = await axios.post("http://localhost:8000/api/v2/user/login-user", {
-          email: email,
-          password: password
-        })
-        console.log(response.data)
-      } catch (err) {
-        console.log("Error", err)
+          email,
+          password
+        });
+        console.log(response.data);
+        dispatch(setemail(email));
+        navigate("/");
+      } catch (error) {
+        console.log("There was an error", error)
       }
     };
 

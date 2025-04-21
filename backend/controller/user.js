@@ -13,6 +13,8 @@ const { default: mongoose } = require("mongoose");
 const { type } = require("os");
 const { count } = require("console");
 require("dotenv").config();
+const jwt = require("jsonwebtoken");
+const {isAuthenticatedUser} = require('../middleware/auth');
 
 // create user
 router.post("/create-user", upload.single("file"), catchAsyncErrors( async (req, res, next) => {
@@ -79,6 +81,27 @@ router.post("/login-user", catchAsyncErrors(async(req, res, next) =>{
         console.log("Password mismatch");
         return next(new ErrorHandler("Authentication failed , Invalid password.", 401));
     }
+
+    //Generate JWT Token
+
+    const token = jwt.sign(
+        {id: user_authen._id, email: user_authen.email},
+        process.env.JWT_SECRET,
+        {expiresIn: "1h"}
+    );
+
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        maxAge: 3600000, //1 hour
+    });
+
+    user_authen.password = undefined;
+    res.status(200).json ({
+        success: true,
+        user_authen,
+    });
 
     res.status(200).json({
         success : true ,
