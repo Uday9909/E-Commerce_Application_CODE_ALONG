@@ -1,13 +1,15 @@
-import React, {useState} from 'react'
-import axios from "axios";
-import {useNavigate} from "react-router-dom";
-import Nav from "../components/nav"
-import { useSelector } from 'react-redux';
+//eslint-disable-next-line
+import React, { useState } from "react";
+import axios from "../axiosConfig";
+import { useNavigate } from "react-router-dom";
+import Nav from "../components/nav";
+import { useSelector } from "react-redux"; // Import useSelector
 
 const CreateAddress = () => {
     const navigate = useNavigate();
 
-    const email = useSelector((state) => state.user.email);
+        // Get email from Redux state
+        const email = useSelector((state) => state.user.email);
 
     const [country, setCountry] = useState("");
     const [city, setCity] = useState("");
@@ -16,9 +18,11 @@ const CreateAddress = () => {
     const [zipCode, setZipCode] = useState("");
     const [addressType, setAddressType] = useState("");
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!email) return alert("No email found in Redux state!"); //added
+
         const addressData = {
             country,
             city,
@@ -29,33 +33,27 @@ const CreateAddress = () => {
             email,
         };
 
-
-        console.log("Submitting address:", addressData);
-    try {
-        const response = await axios.post(
-            "http://localhost:8000/api/v2/user/add-address",
-            addressData,
-            {
-                headers: {"Content-Type" : "application/json"}
+        try {
+            const response = await axios.post(
+                "/api/v2/user/add-address",
+                addressData,
+                {
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+            if (response.status === 201) {
+                alert("Address added successfully!");
+                navigate("/profile");
             }
-        );
-        if (response.status === 201) {
-            alert("Address added successfully");
-            navigate("/profile");
+        } catch (err) {
+            console.error("Error adding address:", err);
+            alert("Failed to add address. Please check the data and try again.");
+        }
+    };
 
-        } 
-    }catch(err) {
-        console.error("Error adding address:", err);
-        alert("Failed to add address.Please check the data and try again");
-    }
-};
-
-
-
-
-  return (
-    <>
-    <Nav />
+    return (
+        <>
+            <Nav />
             <div className="w-[90%] max-w-[500px] bg-white shadow h-auto rounded-[4px] p-4 mx-auto">
                 <h5 className="text-[24px] font-semibold text-center">Add Address</h5>
                 <form onSubmit={handleSubmit}>
@@ -132,10 +130,8 @@ const CreateAddress = () => {
                     </button>
                 </form>
             </div>
-    </>
-  );
-
+        </>
+    );
 };
-
 
 export default CreateAddress;

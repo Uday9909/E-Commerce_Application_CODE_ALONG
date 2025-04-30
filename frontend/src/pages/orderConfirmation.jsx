@@ -1,13 +1,16 @@
-import React, {useState, useEffect} from 'react';
-import axios from 'axios';
-import Nav from "../components/nav";
+//eslint-disable-next-line
+import React, { useState, useEffect } from 'react';
+import Nav from '../components/nav';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {PayPalScriptProvider,PayPalButtons} from '@paypal/react-paypal-js';
+import axios from '../axiosConfig';
+
+// 1) Import PayPalScriptProvider & PayPalButtons
+import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 
 const OrderConfirmation = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const {addressId, email} = location.state || {};
+    const { addressId, email } = location.state || {};
 
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [cartItems, setCartItems] = useState([]);
@@ -15,20 +18,25 @@ const OrderConfirmation = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-        const [paymentMethod,setPaymentMethod]=useState('cod');
+        // 2) Track which payment method is selected
+        const [paymentMethod, setPaymentMethod] = useState('cod'); // 'cod' or 'paypal'
+
 
     useEffect(() => {
-        if(!addressId || !email) {
-            navigate('/select-address');
+        if (!addressId || !email) {
+            navigate('/select-address'); // Redirect if no address selected or email missing
+            return;
         }
 
         const fetchData = async () => {
             try {
-                const addressResponse = await axios.get('http://localhost:8000/api/v2/user/addresses', {
-                    params: {email: email},
+                // 1) Fetch addresses
+                // Fetch selected address
+                const addressResponse = await axios.get('/api/v2/user/addresses', {
+                    params: { email: email },
                 });
 
-                if(addressResponse.status !== 200) {
+                if (addressResponse.status !== 200) {
                     throw new Error(`Failed to fetch addresses. Status: ${addressResponse.status}`);
                 }
 
@@ -39,8 +47,9 @@ const OrderConfirmation = () => {
                 }
                 setSelectedAddress(address);
 
+                // 2) Fetch cart
                 // Fetch cart products from /cartproducts endpoint
-                const cartResponse = await axios.get('http://localhost:8000/api/v2/product/cartproducts', {
+                const cartResponse = await axios.get('/api/v2/product/cartproducts', {
                     params: { email: email },
                 });
 
@@ -50,6 +59,7 @@ const OrderConfirmation = () => {
 
                 const cartData = cartResponse.data;
 
+                // Map cart items to include full image URLs
                 const processedCartItems = cartData.cart.map(item => ({
                     _id: item.productId._id,
                     name: item.productId.name,
@@ -57,14 +67,14 @@ const OrderConfirmation = () => {
                     images: item.productId.images.map(imagePath => `http://localhost:8000${imagePath}`),
                     quantity: item.quantity,
                 }));
-
                 setCartItems(processedCartItems);
 
+                // Calculate total price
                 const total = processedCartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
                 setTotalPrice(total);
-            } catch(err) {
+            } catch (err) {
                 console.error('Error fetching data:', err);
-                setError(err.response?.data?.message || err.message || 'An unexpected error occurred');
+                setError(err.response?.data?.message || err.message || 'An unexpected error occurred.');
             } finally {
                 setLoading(false);
             }
@@ -73,8 +83,12 @@ const OrderConfirmation = () => {
         fetchData();
     }, [addressId, email, navigate]);
 
-    const handlePlaceOrder = async (paymentType='cod', paypalOrderData=null) => {
-        try{
+
+      // 3) Single function to place order, can accept PayPal data if payment was online
+
+    const handlePlaceOrder = async (paymentType = 'cod', paypalOrderData = null) => {
+        try {
+            // Map cartItems to match the backend expected format
             const orderItems = cartItems.map(item => ({
                 product: item._id,
                 name: item.name,
@@ -82,29 +96,29 @@ const OrderConfirmation = () => {
                 price: item.price,
                 image: item.images && item.images.length > 0 ? item.images[0] : '/default-avatar.png'
             }));
+
+            // Construct payload with email, shippingAddress, and orderItems
             const payload = {
                 email,
-                shippingAddress: {
-                    address1: selectedAddress.address1,
-                    address2: selectedAddress.address2 || "",
-                    city: selectedAddress.city,
-                    state: selectedAddress.state,
-                    zipCode: selectedAddress.zipCode, 
-                    country: selectedAddress.country
-                },
+                shippingAddress: selectedAddress,
                 orderItems,
-                paymentMethod:paymentType,
+                paymentMethod: paymentType, // 'cod' or 'paypal'
+                // Optionally store PayPal transaction details:
                 paypalOrderData,
             };
-            console.log("Payload being sent:", payload);
 
-            const response = await axios.post('http://localhost:8000/api/v2/orders/place-order', payload);
-            console.log('Orders placed successfully!', response.data);
-            navigate('/order-success');
-        } catch(error) {
-            console.error('Error placing the orders:', error);
+            // Send POST request to place orders
+            const response = await axios.post('/api/v2/orders/place-order', payload);
+            console.log('Orders placed successfully:', response.data);
+
+            // Navigate to an order success page or display a success message
+            navigate('/order-success'); // Adjust route as needed
+        } catch (error) {
+            console.error('Error placing order:', error);
+            // Optionally update error state to display an error message to the user
         }
     };
+
 
     if (loading) {
         return (
@@ -114,7 +128,6 @@ const OrderConfirmation = () => {
         );
     }
 
-    // Render error state
     if (error) {
         return (
             <div className='w-full h-screen flex flex-col justify-center items-center'>
@@ -186,7 +199,8 @@ const OrderConfirmation = () => {
                     <div className='mb-6 flex justify-end'>
                         <p className='text-xl font-semibold'>Total: ${totalPrice.toFixed(2)}</p>
                     </div>
-                        {/* Payment Method (Cash on Delivery or PayPal) */}
+
+                     {/* Payment Method (Cash on Delivery or PayPal) */}
                      <div className='mb-6'>
                         <h3 className='text-xl font-medium mb-2'>Payment Method</h3>
                         <div className='p-4 border rounded-md space-x-4'>
@@ -211,11 +225,12 @@ const OrderConfirmation = () => {
                                 <span className='ml-2'>Pay Online (PayPal)</span>
                             </label>
                         </div>
-                            {paymentMethod === 'paypal' && (
+
+                        {paymentMethod === 'paypal' && (
                             <div className='mt-4' style={{ maxWidth: '500px' }}>
                                 <PayPalScriptProvider
                                     options={{
-                                        'client-id': 'AapgmGvxFKztKUaQw6VRpPa6sRVD7AwV7sUTvvZYZUxtKBPBClzXCSxFgCbfh9rUaoQWlUqoE2cscrh7', 
+                                        'client-id': 'Acm9zQjTXdwA8GV0arxH3hMuavn-QPzaPsRRmSmDJJxEQhbn1WCtZ0EiGXO0pzEFJcELlq07-E602iWv', 
                                     }}
                                 >
                                     <PayPalButtons
@@ -247,6 +262,7 @@ const OrderConfirmation = () => {
                             </div>
                         )}
                     </div>
+
                     {/* Place Order Button (for COD) */}
                     {paymentMethod === 'cod' && (
                         <div className='flex justify-center'>
@@ -258,12 +274,10 @@ const OrderConfirmation = () => {
                             </button>
                         </div>
                     )}
-
-                  
                 </div>
             </div>
         </div>
     );
-}
+};
 
 export default OrderConfirmation;

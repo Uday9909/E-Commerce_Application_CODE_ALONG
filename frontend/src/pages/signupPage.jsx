@@ -4,10 +4,9 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import styles from "../styles/style";
 import { Link } from "react-router-dom";
 import { RxAvatar } from "react-icons/rx";
-import axios from "axios";
-
-// import {useDispatch} from "react-redux";
-// import {setemail} from "../../store/userActions";
+import axios from 'axios';
+//import { useDispatch } from 'react-redux';
+//import { setemail } from "../../store/userActions";
 
 const SignupPage = () => {
   const [email, setEmail] = useState("");
@@ -20,47 +19,42 @@ const SignupPage = () => {
     const file = e.target.files[0];
     if (file) {
       const filePath = URL.createObjectURL(file);
-      console.log("File path: ", filePath);
+      console.log("File path:", filePath);
       setAvatar(file);
     }
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const newForm = new FormData();
-
     newForm.append("file", avatar);
     newForm.append("name", name);
-    newForm.append("email", email);
-    newForm.append("password", password);
-
+    newForm.append("email", email); 
+    newForm.append("password", password); 
+  
     const config = {
       headers: {
-        "Content-type": "multipart/form-data",
+        "Content-Type": "multipart/form-data",
         "Accept": "any",
       },
     };
 
-    axios.post("http://localhost:8000/api/v2/user/create-user", newForm, config).then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    axios.post("/api/v2/user/create-user", newForm, config).then((res) => {
+      console.log(res.data);
+    }).catch((err) => {
+      console.log(err);
+    });
   };
-
   return (
-    <div
-      className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-12 
-                flex flex-col justify-center items-center sm:px-6 lg:px-8"
-    >
+    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-12 flex flex-col justify-center sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-bold text-gray-950">
+        <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
           Register as a new user
         </h2>
       </div>
-      <div className="mt-8 sm:w-full sm:max-w-md">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
@@ -78,11 +72,11 @@ const SignupPage = () => {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
-                                placeholder-gray-400 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
               </div>
             </div>
+
             <div>
               <label
                 htmlFor="email"
@@ -98,11 +92,11 @@ const SignupPage = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
-                                placeholder-gray-400 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
               </div>
             </div>
+
             <div>
               <label
                 htmlFor="password"
@@ -118,8 +112,7 @@ const SignupPage = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
-                                placeholder-gray-400 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
                 {visible ? (
                   <AiOutlineEye
@@ -136,13 +129,14 @@ const SignupPage = () => {
                 )}
               </div>
             </div>
+
             <div>
               <label
                 htmlFor="avatar"
                 className="block text-sm font-medium text-gray-700"
               ></label>
               <div className="mt-2 flex items-center">
-                <span className="inline-block h-9 w-8 rounded-full overflow-hidden">
+                <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
                   {avatar ? (
                     <img
                       src={URL.createObjectURL(avatar)}
@@ -169,6 +163,7 @@ const SignupPage = () => {
                 </label>
               </div>
             </div>
+
             <div>
               <button
                 type="submit"
@@ -176,9 +171,10 @@ const SignupPage = () => {
                 onClick={() => console.log("Submit button clicked")}
               >
                 Submit
+                
               </button>
             </div>
-            <div className={`${styles.normalFlex} w-full`}>
+            <div className={`${styles.noramlFlex} w-full`}>
               <h4>Already have an account?</h4>
               <Link to="/login" className="text-blue-600 pl-2">
                 Sign In

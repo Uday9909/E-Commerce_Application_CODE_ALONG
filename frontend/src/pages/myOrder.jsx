@@ -1,52 +1,56 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import axios from "axios";
-import Nav from "../components/nav";
-import { useSelector } from 'react-redux';
 
+//eslint-disable-next-line
+import React, { useState, useEffect, useCallback } from 'react';
+import axios from '../axiosConfig';
+import Nav from '../components/nav'
+import { useSelector } from 'react-redux'; // Import useSelector
 
 const MyOrdersPage = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const email = useSelector((state) => state.user.email);
+        // Retrieve email from Redux state
+        const email = useSelector((state) => state.user.email);
 
-    const fetchOrders = useCallback(async () => {
-        if (!email) return;
-        try{
+        const fetchOrders = useCallback(async () => {
+        if (!email) return; // Only fetch if email is available
+        try {
             setLoading(true);
             setError('');
-            const response = await axios.get('http://localhost:8000/api/v2/orders/my-orders', {
-                params: {email},
+            const response = await axios.get('/api/v2/orders/my-orders', {
+                params: { email },
             });
             setOrders(response.data.orders);
-        } catch(err) {
+        } catch (err) {
             setError(err.response?.data?.message || 'Error fetching orders');
         } finally {
             setLoading(false);
         }
-    }, [email]);
+    }, [email]); // Dependency array includes email
 
+    // Cancel order handler
     const cancelOrder = async (orderId) => {
-        console.log("order cancel");
+
         try {
             const response = await axios.patch(`http://localhost:8000/api/v2/orders/cancel-order/${orderId}`);
-
-            setOrders ((prevOrders) => 
-            prevOrders.map((order) => 
-            order._id === orderId ? {...order, status:response.data.order.status}: order)
+            // Update the order in local state: either remove or update its status.
+            setOrders((prevOrders) =>
+                prevOrders.map((order) =>
+                    order._id === orderId ? { ...order, status: response.data.order.status } : order
+                )
             );
-            
-           await fetchOrders();
-        } catch(err) {
+                                // Refetch updated orders
+                                await fetchOrders();
+        } catch (err) {
             console.error(err);
-            alert(err.response?.data?.message || 'Error in cancelling the order');
+            alert(err.response?.data?.message || 'Error cancelling order');
         }
     };
-    
+
     useEffect(() => {
         fetchOrders();
-    }, [fetchOrders]);
+    }, [fetchOrders]); // Dependency array includes email
 
     return (
         <>
@@ -106,6 +110,7 @@ const MyOrdersPage = () => {
                                             ))}
                                         </ul>
                                     </div>
+
                                     {/* Cancel button (hide if already cancelled) */}
                                     {order.orderStatus !== 'Cancelled' && (
                                         <button
@@ -132,6 +137,6 @@ const MyOrdersPage = () => {
             </div>
         </>
     );
-}
+};
 
 export default MyOrdersPage;

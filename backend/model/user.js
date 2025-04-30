@@ -1,106 +1,117 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
-    name: {
+  name:{
+    type: String,
+    required: [true, "Please enter your name!"],
+  },
+  email:{
+    type: String,
+    required: [true, "Please enter your email!"],
+  },
+  password:{
+    type: String,
+    required: [true, "Please enter your password"],
+    minLength: [4, "Password should be greater than 4 characters"],
+    select: false,
+  },
+  phoneNumber:{
+    type: Number,
+  },
+  addresses:[
+    {
+      country: {
         type: String,
-        required: [true, "Please enter your name!"],
-    },
-    email: {
+      },
+      city:{
         type: String,
-        required: [true, "Please enter your email!"],
-        unique: true, // Ensures email uniqueness
-    },
-    password: {
+      },
+      address1:{
         type: String,
-        required: [true, "Please enter your password!"],
-        minlength: [4, "Password should be greater than 4 characters"],
-        select: false, // Exclude password from query results by default
-    },
-    phoneNumber: {
+      },
+      address2:{
+        type: String,
+      },
+      zipCode:{
         type: Number,
-    },
-    addresses: [
-        {
-            country: {
-                type: String,
-            },
-            city: {
-                type: String,
-            },
-            address1: {
-                type: String,
-            },
-            address2: {
-                type: String,
-            },
-            zipcode: {
-                type: Number,
-            },
-            addressType: {
-                type: String,
-            },
-        },
-    ],
-    role: {
+      },
+      addressType:{
         type: String,
-        default: "user",
-    },
-    avatar: {
-        public_id: {
-            type: String,
-            required: true,
-        },
-        url: {
-            type: String,
-            required: true,
-        },
-    },
-    cart: [
-            {
-                    productId: {
-                        type: mongoose.Schema.Types.ObjectId,
-                        ref: "Product",
-                        required: true,
-                    },
-                    quantity: {
-                        type: Number,
-                        required: true,
-                        min: [1, "Quantity cannot be less than 1"],
-                        default:1,
-                    },
-                },
-            ],
-    createdAt: {
-        type: Date, // Fixed typo from `DataTransfer` to `Date`
-        default: Date.now,
-    },
-    resetPasswordToken: String,
-    resetPasswordTime: Date,
-});
-
-// Hash password before saving user
-userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) {
-        return next();
+      },
     }
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
+  ],
+  role:{
+    type: String,
+    default: "user",
+  },
+  avatar:{
+    public_id: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
+ },
+
+ cart: [
+  {
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: [1, "Quantity cannot be less than 1"],
+      default: 1,
+    },
+  },
+],
+
+/*...................
+
+The cart field contains an array of objects, each with:
+productId: References a Product from the Product collection.
+quantity: Stores how many units of that product the user wants.
+This structure allows a user to have multiple products in their cart.
+
+......................*/
+
+ createdAt:{
+  type: Date,
+  default: Date.now(),
+ },
+ resetPasswordToken: String,
+ resetPasswordTime: Date,
 });
 
-// Generate JWT token
+
+
+//  Hash password
+userSchema.pre("save", async function (next){
+  if(!this.isModified("password")){
+    return next();
+  }
+
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+// jwt token
 userSchema.methods.getJwtToken = function () {
-    return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
-        expiresIn: process.env.JWT_EXPIRE,
-    });
+  return jwt.sign({ id: this._id}, process.env.JWT_SECRET_KEY,{
+    expiresIn: process.env.JWT_EXPIRE,
+  });
 };
 
-// Compare entered password with hashed password
+// compare password
 userSchema.methods.comparePassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password);
+  return bcrypt.compare(enteredPassword, this.password);
 };
-
-
 
 module.exports = mongoose.model("User", userSchema);
